@@ -1,8 +1,9 @@
 <template>
     <section>
         <div class="container">
-            <div v-for="(disco,index) in characters" :key="index" class="card-dischi">
-                <CardDischi :disco="characters[index]"/>
+            <SelectGenre @search="searchCharacters" :info="characters"/>
+            <div v-for="(disco,index) in dischiFiltered" :key="index" class="card-dischi">
+                <CardDischi :disco="disco"/>
             </div>
         </div>
     </section>
@@ -10,15 +11,18 @@
 
 <script>
 import CardDischi from "./CardDischi.vue";
+import SelectGenre from "./SelectGenre.vue";
 import axios from "axios";
 export default {
     name: "SectionDischi",
     components: {
-        CardDischi
+        CardDischi,
+        SelectGenre
     },
     data() {
         return {
-            characters: null
+            characters: null,
+            payload: ""
         }
     },
     created() {
@@ -30,6 +34,21 @@ export default {
         .catch(function (error) {
             console.log(error);
         });
+    },
+    methods: {
+        searchCharacters(payload) {
+            this.payload = payload;
+            console.log(payload);
+        }
+    },
+    computed: {
+        dischiFiltered() {
+            const arrayFiltered = this.characters.filter( (elm) => {
+                console.log(elm);
+                return elm.genre.includes(this.payload)
+            });
+            return arrayFiltered;
+        }
     }
 }
 </script>
